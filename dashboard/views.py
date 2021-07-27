@@ -5,6 +5,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import UserCreationForm
 from .forms import UserDetailsForm, UserRegisterForm
+from django.core.exceptions import ValidationError
+from django.contrib import messages
 from django.urls import reverse_lazy
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
@@ -22,36 +24,57 @@ class DashboardView(LoginRequiredMixin, generic.TemplateView):
     template_name = 'dashboard/dashboard.html'  
 
 class SignUpView(generic.CreateView):
-    form_class = UserRegisterForm
+    form_class = UserRegisterForm 
     success_url = reverse_lazy('login')
     template_name = 'registration/signup.html'
+
+    def get(self, request):
+        form = self.form_class()
+        profile_form = UserDetailsForm()
+        return render(request, 'registration/signup.html', {'userform': form, 'profile_form': profile_form})
     
     def post(self, request):
         if request.method == 'POST':
             form = self.form_class(request.POST)
-            if form.is_valid():
-                user = form.save(commit=False)
-                user.is_active = False
-                user.save()
-                current_site = get_current_site(request)
-                mail_subject = 'Activate your blog account.'
-                message = render_to_string('registration/acc_active_email.html', {
-                    'user': user,
-                    'domain': current_site.domain,
-                    'uid':urlsafe_base64_encode(force_bytes(user.pk)),
-                    'token':account_activation_token.make_token(user),
-                })
-                to_email = form.cleaned_data.get('email')
-                # email = EmailMessage(
-                #             mail_subject, message, to=[to_email]
-                # )
-                # email.send()
-                email_from = settings.EMAIL_HOST_USER
-                send_mail( mail_subject, message, email_from, [to_email] )
-                return HttpResponse('Please confirm your email address to complete the registration')
+            profile_form = UserDetailsForm(request.POST)
+            
+            if form.is_valid() and profile_form.is_valid():
+                email = form.cleaned_data.get('email')
+                if User.objects.filter(email=email).exists():
+                     return HttpResponse('Email exists, Please login')
+                else:
+                    user = form.save(commit=False)
+                    user.is_active = False
+                    user.save()
+
+                    # Saving user profile
+                    profile = profile_form.save(commit=False)
+                    profile.user = user
+                    profile.save()
+                    messages.success(request,  'Your account has been successfully created')
+
+                    
+                    # Sending email verification
+                    current_site = get_current_site(request)
+                    mail_subject = 'Activate your blog account.'
+                    message = render_to_string('registration/acc_active_email.html', {
+                        'user': user,
+                        'domain': current_site.domain,
+                        'uid':urlsafe_base64_encode(force_bytes(user.pk)),
+                        'token':account_activation_token.make_token(user),
+                    })
+                    to_email = form.cleaned_data.get('email')
+                    # email = EmailMessage(
+                    #             mail_subject, message, to=[to_email]
+                    # )
+                    # email.send()
+                    email_from = settings.EMAIL_HOST_USER
+                    send_mail( mail_subject, message, email_from, [to_email] )
+                    return HttpResponse('Please confirm your email address to complete the registration')
         else:
             form = self.form_class()
-        return render(request, 'registration/signup.html', {'form': form})
+            profile_form = UserDetailsForm()
+        return render(request, 'registration/signup.html', {'userform': form, 'profile_form': profile_form})
 
 
 class IndexView(generic.TemplateView):

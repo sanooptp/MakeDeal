@@ -1,11 +1,46 @@
 <!-- templates/registration/signup.html -->
-
+{% extends 'dashboard/base.html' %}
 
 {% block content %}
   <h2>Sign up</h2>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Sign Up</button>
-  </form>
+ <form method="POST" action="">
+                {% csrf_token %}
+                    <h3>Register Profile</h3>
+
+                    <div class="form-field">
+                        {{profile_form.name.label_tag}}
+                        {{profile_form.name}}
+                    </div>
+                    <div class="form-field">
+                        {{userform.username.errors}}
+                        {{userform.username.label_tag}}
+                        {{userform.username}}
+                    </div>
+                    <div class="form-field">
+                        {{profile_form.email.label_tag}}
+                        {{profile_form.email}}
+                    </div>
+                    <div class="form-field">
+                        {{profile_form.address.label_tag}}
+                        {{profile_form.address}}
+                    </div>
+                    <div class="form-field">
+                        {{userform.password1.errors}}
+                        {{userform.password1.label_tag}}
+                        {{userform.password1}}
+                    </div>
+                    <div class="form-field">
+                        {{userform.password2.errors}}
+                        {{userform.password2.label_tag}}
+                        {{userform.password2}}
+                    </div>
+
+                <hr>
+                <input id="form-button" class="btn btn-success btn-block" type="submit" value="Create Profile">
+                <br>
+                    {{form.non_field_errors}}
+                <p>Already have an account? <a href="{% url 'login' %}">Login</a></p>
+            </form>
+  <a href="{% url 'social:begin' 'google-oauth2' %}">Google</a>
 {% endblock %}
+

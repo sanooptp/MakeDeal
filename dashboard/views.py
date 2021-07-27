@@ -6,6 +6,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import UserCreationForm
 from .forms import UserDetailsForm, UserRegisterForm
 from django.core.exceptions import ValidationError
+from django.contrib import messages
 from django.urls import reverse_lazy
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
@@ -34,8 +35,9 @@ class SignUpView(generic.CreateView):
     
     def post(self, request):
         if request.method == 'POST':
-            form = self.form_class(request.POST, instance = request.user)
-            profile_form = UserDetailsForm(request.POST, instance=request.user.profile)
+            form = self.form_class(request.POST)
+            profile_form = UserDetailsForm(request.POST)
+            
             if form.is_valid() and profile_form.is_valid():
                 email = form.cleaned_data.get('email')
                 if User.objects.filter(email=email).exists():
@@ -44,7 +46,15 @@ class SignUpView(generic.CreateView):
                     user = form.save(commit=False)
                     user.is_active = False
                     user.save()
-                    profile_form.save()
+
+                    # Saving user profile
+                    profile = profile_form.save(commit=False)
+                    profile.user = user
+                    profile.save()
+                    messages.success(request,  'Your account has been successfully created')
+
+                    
+                    # Sending email verification
                     current_site = get_current_site(request)
                     mail_subject = 'Activate your blog account.'
                     message = render_to_string('registration/acc_active_email.html', {
@@ -63,7 +73,7 @@ class SignUpView(generic.CreateView):
                     return HttpResponse('Please confirm your email address to complete the registration')
         else:
             form = self.form_class()
-            profile_form = UserDetailsForm(instance=request.user.profile)
+            profile_form = UserDetailsForm()
         return render(request, 'registration/signup.html', {'userform': form, 'profile_form': profile_form})
 
 

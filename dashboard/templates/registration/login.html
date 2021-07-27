@@ -4,5 +4,6 @@
   {% csrf_token %}
   {{ form.as_p }}
   <button type="submit">Log In</button>
+  <p><a href="{% url 'password_reset' %}">Reset Password</a></p>
   <a href="{% url 'social:begin' 'google-oauth2' %}">Google</a>
 </form>

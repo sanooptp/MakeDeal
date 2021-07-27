@@ -32,13 +32,14 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'dashboard',
+    'product',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'dashboard',
     'social_django',
 ]
 
@@ -58,7 +59,7 @@ ROOT_URLCONF = 'makedeal.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -154,3 +155,8 @@ AUTHENTICATION_BACKENDS = (
 LOGIN_URL = '/auth/login/google-oauth2/'
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '482397941429-7tkot32sp416hnr3ienke8ruobpvpdcd.apps.googleusercontent.com'
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '6XO4fhvSPyAu9KPYETNoYzVe'
+
+MEDIA_URL = '/media/'
+
+# Path where media is stored
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')

@@ -6,16 +6,20 @@ from django.dispatch import receiver
 
 
 class UserDetails(models.Model):
-    user = models.OneToOneField(User, verbose_name=("user"), on_delete=models.CASCADE)
+    user = models.OneToOneField(User, verbose_name=("user"), on_delete=models.CASCADE, null=True)
     name = models.CharField( max_length=50)
     phone = models.IntegerField()
     email = models.EmailField( max_length=254)
 
-@receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        UserDetails.objects.create(user=instance)
+    def __str__(self):
+        return self.name
 
-@receiver(post_save, sender=User)
-def save_user_profile(sender, instance, **kwargs):
-    instance.profile.save()
+# @receiver(post_save, sender=User)
+# def create_user_profile(sender, instance, created, **kwargs):
+#     if created:
+#         UserDetails.objects.create(user=instance)
+#         instance.save()
+
+# @receiver(post_save, sender=User)
+# def save_user_profile(sender, instance, **kwargs):
+#     instance.profile.save()

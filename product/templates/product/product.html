@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    {% extends 'dashboard/base.html' %}
+        {% block content %}
+        {% if product.user == request.user%}
+        <a href="{% url 'editproduct' product.id%}"><button>Edit</button></a>
+        {% endif%}
+        <ul>
+            <li>
+
+               {{product.name}}
+                <br>
+               {{product.description}}
+<br>
+               {{product.category}}
+<br>
+               {{product.location}}
+<br>
+               <img style="width: 200px; height: 150px;" src="{{product.image1.url}}" alt="image1">
+<br>
+               {{product.price}}
+<br>
+               {{product.time_to_publish}}
+            </li>
+        </ul>
+
+        {% endblock %}
+</body>
+</html>

@@ -9,7 +9,7 @@ class UserDetails(models.Model):
     user = models.OneToOneField(User, verbose_name=("user"), on_delete=models.CASCADE, null=True)
     name = models.CharField( max_length=50)
     phone = models.IntegerField()
-    email = models.EmailField( max_length=254)
+    email = models.CharField( max_length=254)
 
     def __str__(self):
         return self.name

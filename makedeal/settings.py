@@ -133,6 +133,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = 'dashboard'
 LOGOUT_URL = 'logout'
+LOGOUT_REDIRECT_URL = 'dashboard'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
@@ -152,7 +153,7 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
-LOGIN_URL = '/auth/login/google-oauth2/'
+LOGIN_URL = '/'
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '482397941429-7tkot32sp416hnr3ienke8ruobpvpdcd.apps.googleusercontent.com'
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '6XO4fhvSPyAu9KPYETNoYzVe'
 

@@ -1,10 +1,15 @@
+from decimal import Context
+
+from django.views.generic import detail
+from dashboard.models import UserDetails
+from django.db import models
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.views import generic
 from django.contrib.auth.models import User
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import UserCreationForm
-from .forms import UserDetailsForm, UserRegisterForm
+from .forms import UserDetailsForm, UserEditForm, UserRegisterForm
 from django.core.exceptions import ValidationError
 from django.contrib import messages
 from django.urls import reverse_lazy
@@ -18,10 +23,13 @@ from django.utils.encoding import force_bytes, force_text
 from django.core.mail import EmailMessage, send_mail
 from .tokens import account_activation_token
 from django.conf import settings
+from product.models import Product
 
 
-class DashboardView(LoginRequiredMixin, generic.TemplateView):
+class DashboardView(LoginRequiredMixin, generic.ListView):
     template_name = 'dashboard/dashboard.html'  
+    model = Product
+    context_object_name = 'products'
 
 class SignUpView(generic.CreateView):
     form_class = UserRegisterForm 
@@ -99,5 +107,23 @@ def activate(request, uidb64, token):
         return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
     else:
         return HttpResponse('Activation link is invalid!')
+
+class ProfileView(LoginRequiredMixin, generic.ListView):
+    template_name= 'dashboard/profile.html'
     
-    # comment added
+    def get(self, request):
+        userdetails = UserDetails.objects.get(user= request.user)
+        context = {'userdetails': userdetails}
+        return render (request, self.template_name, context)
+
+class ProfileEditView(LoginRequiredMixin, generic.CreateView):
+    template_name= 'dashboard/editprofile.html'
+    form_class = UserEditForm
+    
+    def get(self, request):
+        userform = User 
+        details = self.form_class()
+        context = {'userform': userform, 'details': details}
+        return render(request, self.template_name, context )
+
+

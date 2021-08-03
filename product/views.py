@@ -1,3 +1,7 @@
+from dashboard.models import UserDetails
+from purchase.models import Purchase
+from purchase.forms import BuyForm
+from django.views.generic.base import TemplateView
 from product.models import Product
 from typing import Generic
 from django import forms
@@ -10,6 +14,11 @@ from django.urls import reverse_lazy
 from .forms import CreateProductForm, EditProductForm
 from django.contrib import messages
 from django.shortcuts import redirect
+from django.template.loader import render_to_string
+from django.core.mail import EmailMessage, send_mail
+from django.conf import settings
+
+
 
 
 class ProductCreateView(LoginRequiredMixin, generic.FormView):
@@ -25,7 +34,7 @@ class ProductCreateView(LoginRequiredMixin, generic.FormView):
                 fm = form.save(commit= False)
                 fm.user = request.user
                 fm.save()
-                messages.success(request,  'Product created')
+                messages.success(request,'Product created')
                 return redirect('dashboard')
             else:
                 messages.success(request,  ' Invalid form   ')
@@ -38,7 +47,7 @@ class MyProductView(LoginRequiredMixin,generic.ListView):
     def get_queryset(self):
         return Product.objects.filter(user=self.request.user)
 
-class ProducView(generic.ListView):
+class ProducView(generic.CreateView):
     template_name = 'product/product.html'
     context_object_name = 'products'
 
@@ -48,8 +57,44 @@ class ProducView(generic.ListView):
 
     def get (self, request, id):
         product = Product.objects.get(id = id)
-        context= {'product': product}
+        purchase = ''
+        buyform = BuyForm
+        if Purchase.objects.filter(product = product, buyer = request.user):
+            if Purchase.objects.filter(product = product, buyer = request.user):
+                purchase = Purchase.objects.get(product = product, buyer = request.user)
+            context= {'product': product, 'purchase': purchase}
+        else:
+            context= {'product': product, 'buyform': buyform}
         return render(request, self.template_name, context )
+    
+    def post(self, request, id):
+        if request.method == 'POST':
+            buyer = request.user
+            product = Product.objects.get(id= id)
+            seller = product.user
+            seller_email = seller.email
+            buyform = BuyForm(request.POST)
+            price = buyform['buyer_price'].value()
+            if buyform.is_valid():
+                fm = buyform.save(commit=False)
+                fm.seller = seller
+                fm.buyer = buyer
+                fm.status = False
+                fm.product = product
+                fm.save()
+                mail_subject = 'Product purchase notification.'
+                message = render_to_string('product/emailnotification.html', {
+                    'buyer': request.user,
+                    'product': product.name,
+                    'price' : price,
+                    'seller': seller
+                })
+                email_from = settings.EMAIL_HOST_USER
+                send_mail( mail_subject, message, email_from, [seller_email] )
+                return redirect (self.request.path_info)
+            else:
+                return render(request, self.template_name, {'buyform': buyform})
+
 
 class EditProductView(LoginRequiredMixin,generic.CreateView):
     template_name = 'product/editproduct.html'
@@ -87,7 +132,7 @@ class EditProductView(LoginRequiredMixin,generic.CreateView):
                 fs = form.save(commit = False)
                 fs.user =request.user
                 form.save()
-                messages.success(request, 'Profile details updated.')
+                messages.success(request, 'Product details updated.')
                 return redirect('myproducts')
         return render(request, self.template_name, {'form': form})
 

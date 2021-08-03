@@ -21,5 +21,6 @@ urlpatterns = [
     
     path('',include('dashboard.urls')),
     path('',include('product.urls')),
+    path('',include('purchase.urls')),
     path('', include('social_django.urls', namespace='social')),
 ]

@@ -1,8 +1,8 @@
-<form method="POST" action="">
+<form method="POST" action="" enctype="multipart/form-data">
     {% csrf_token %}
-    {{detail.as_p}}
-        
+    {{detailsform.as_p}}
+    {{userform.as_p}}
+ 
     <input id="form-button" class="" type="submit" value="Update Profile">
-    <br>
-        {{form.non_field_errors}}
-</form>
+    {{form.non_field_errors}}
+</form>     

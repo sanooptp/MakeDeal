@@ -1,5 +1,5 @@
 from decimal import Context
-
+from purchase.models import Purchase
 from django.views.generic import detail
 from dashboard.models import UserDetails
 from django.db import models
@@ -42,15 +42,18 @@ class SignUpView(generic.CreateView):
         return render(request, 'registration/signup.html', {'userform': form, 'profile_form': profile_form})
     
     def post(self, request):
+        # import pdb
+        # pdb.set_trace()
         if request.method == 'POST':
             form = self.form_class(request.POST)
-            profile_form = UserDetailsForm(request.POST)
+            profile_form = UserDetailsForm(request.POST, request.FILES)
             
-            if form.is_valid() and profile_form.is_valid():
-                email = form.cleaned_data.get('email')
-                if User.objects.filter(email=email).exists():
-                     return HttpResponse('Email exists, Please login')
-                else:
+            if form.is_valid():
+                if profile_form.is_valid():
+                    email = form.cleaned_data.get('email')
+                    # if User.objects.filter(email=email).exists():
+                    #      return HttpResponse('Email exists, Please login')
+                    # else:
                     user = form.save(commit=False)
                     user.is_active = False
                     user.save()
@@ -61,10 +64,11 @@ class SignUpView(generic.CreateView):
                     profile.save()
                     messages.success(request,  'Your account has been successfully created')
 
+                    # Saving user profile
                     
                     # Sending email verification
                     current_site = get_current_site(request)
-                    mail_subject = 'Activate your blog account.'
+                    mail_subject = 'Activate your account.'
                     message = render_to_string('registration/acc_active_email.html', {
                         'user': user,
                         'domain': current_site.domain,
@@ -89,9 +93,11 @@ class IndexView(generic.TemplateView):
     template_name = 'dashboard/index.html'
 
     def get(self, request, *args, **kwargs):
+        # count = Purchase.objects.filter(buyer = request.user).count()
         if request.user.is_authenticated:
             return redirect('dashboard')
         return super(IndexView, self).get(request, *args, **kwargs)
+    
     
 def activate(request, uidb64, token):
     try:
@@ -118,12 +124,36 @@ class ProfileView(LoginRequiredMixin, generic.ListView):
 
 class ProfileEditView(LoginRequiredMixin, generic.CreateView):
     template_name= 'dashboard/editprofile.html'
-    form_class = UserEditForm
+    form_class = UserDetailsForm
     
     def get(self, request):
-        userform = User 
-        details = self.form_class()
-        context = {'userform': userform, 'details': details}
-        return render(request, self.template_name, context )
+        getdetails = UserDetails.objects.get(user = request.user)
+        userform = UserEditForm(instance= request.user)
+        detailsform = self.form_class( instance = getdetails)
+        context = {'userform': userform, 'detailsform': detailsform}
+        return render(request, self.template_name, context)
+
+    def post(self, request):
+        # import pdb
+        # pdb.set_trace()
+        getdetails = UserDetails.objects.get(user = request.user)
+        if request.method == 'POST':
+            details_form = self.form_class(request.POST, request.FILES, instance = getdetails)
+            userform = UserEditForm(request.POST, request.FILES, instance= request.user)
+            if userform.is_valid():
+                user = userform.save()
+                user.save()
+
+            if details_form.is_valid():
+                details = details_form.save()
+                details.save()
+                messages.success(request, 'Profile details updated.')
+                return redirect('profile')
+        else:
+            userform = self.form_class(instance = request.user)
+            details_form = self.form_class(instance = getdetails)
+            
+        context = {'detailsform': details_form, 'userform': userform}
+        return render(request, self.template_name, context)
 
 

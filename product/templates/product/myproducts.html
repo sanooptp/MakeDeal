@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
-<body>
+<body >
     {% extends 'dashboard/base.html' %}
         {% block content %}
         <ul class="messages">
@@ -16,18 +16,51 @@
               </div>
             {% endfor %}
         </ul>
-        {% for product in products %}
-        {% if messages %}
+        
 
-{% endif %}
-        <ul>
-            <li>
-                <a href="{% url 'product' product.id%}">{{product.name}}</a>
-                {{product.description}}
+
+
+
+  <!--Main layout-->
+  <main class="my-5" >
+    <div class="container" >
+      <!--Grid row-->
+      <div class="row">
+        <h1 class="display-1 mb-5">My Products</h1>
+        <!--Grid column-->
+        <div class="col-md-9 mb-4">
+          <!--Section: Content-->
+          <section>
+            {% for product in products %}
+            <!-- Post -->
+            <div class="row">
+              <div class="col-md-4 mb-5">
+                <div class="bg-image hover-overlay shadow-1-strong rounded ripple" data-mdb-ripple-color="light">
+                  <img src="{{product.image1.url}}" class="img-fluid" style="height: 170px; width: 300px; border-radius: 25px;"/>
+                  <a href="#!">
+                    <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+                  </a>
+                </div>
+              </div>
+
+              <div class="col-md-8 mb-4">
+                <h5>{{product.name}}</h5>
+                <p>
+                    {{product.description}}
+                </p>
+                <a href="{% url 'product' product.id%}">
+                    <button type="button" class="btn btn-dark btn-lg btn-block" style="border-radius: 25px;">View Product Details</button>
+                </a>
                 
-            </li>
-        </ul>
-        {% endfor %}
+              </div>
+            </div>
+            {% endfor %}
+
+            
+          </section>
+          <!--Section: Content-->
+        </div>
+       
         {% endblock %}
 </body>
 </html> 

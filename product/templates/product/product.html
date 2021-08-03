@@ -9,9 +9,6 @@
 <body>
     {% extends 'dashboard/base.html' %}
         {% block content %}
-        {% if product.user == request.user%}
-        <a href="{% url 'editproduct' product.id%}"><button>Edit</button></a>
-        {% endif%}
         <ul>
             <li>
 
@@ -28,8 +25,30 @@
                {{product.price}}
 <br>
                {{product.time_to_publish}}
+
             </li>
         </ul>
+        {% if product.user == request.user%}
+
+            <a href="{% url 'editproduct' product.id%}"><button>Edit</button></a>
+
+        {% else %}
+            {% if purchase %}
+
+                <h1>request send</h1>
+
+            {%else%}
+
+                <form action="" method="POST">
+                    {% csrf_token %}
+                    {{buyform.as_p}}
+                    <input type="submit" name="Buy">
+                </form>
+
+            {% endif %}
+
+        {% endif %}
+
 
         {% endblock %}
 </body>

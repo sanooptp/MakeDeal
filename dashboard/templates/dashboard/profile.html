@@ -10,6 +10,14 @@
     {% extends 'dashboard/base.html' %}
     {% if user.is_authenticated %}
         {% block content %}
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        <img src="{{ userdetails.profile_picture.url}}" alt="" style="width: 100px; height: 200px;">
         {{user.username}}
         {{userdetails.name}}
         {{user.email}}

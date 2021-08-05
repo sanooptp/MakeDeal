@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    {% extends 'dashboard/base.html' %}
+        {% block content %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {{form.user}}
+        {% if product.user == request.user %}
+        <form action="" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{form.as_p}}
+            <input type="submit">
+        </form>
+        {% else %}
+        <h1>Your are not autherised to do this operation</h1>
+        {%endif%}
+
+
+
+
+        <section class="vh-100 " style="background-color: grey;">
+            <div class="container h-100">
+              <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col-lg-12 col-xl-11">
+                  <div class="card text-black" style="border-radius: 25px;     margin-bottom: 50px;">
+                    <div class="card-body p-md-5">
+                      <div class="row justify-content-center">
+                        <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
+          
+                          <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">Add your Product</p>
+  
+  
+          
+                          <form class="mx-1 mx-md-4" method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+          
+                            <div class="d-flex flex-row align-items-center mb-4">
+                              <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+                              <div class="form-outline flex-fill mb-0">
+                                {{form.name}}
+                                <label class="form-label" for="form3Example1c">Product Name</label>
+                              </div>
+                            </div>
+          
+                            <div class="d-flex flex-row align-items-center mb-4">
+                              <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
+                              <div class="form-outline flex-fill mb-0">
+                                {{form.description}}
+                                <label class="form-label" for="form3Example3c">About your productt</label>
+                              </div>
+                            </div>
+  
+                            <div class="d-flex flex-row align-items-center mb-4">
+                              <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
+                              <div class="form-outline flex-fill mb-0">
+                                {{form.category}}
+                                <label class="form-label" for="form3Example3c">Product category</label>
+                              </div>
+                            </div>
+          
+                            <div class="d-flex flex-row align-items-center mb-4">
+                              <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
+                              <div class="form-outline flex-fill mb-0">
+                                {{form.location}}
+                                <label class="form-label" for="form3Example4c">Your location</label>
+                              </div>
+                            </div>
+          
+                            <div class="d-flex flex-row align-items-center mb-4">
+                              <i class="fas fa-key fa-lg me-3 fa-fw"></i>
+                              <div class="form-outline flex-fill mb-0">
+                                <input type="number" class="form-control" name="price" id="id_price">
+                                <label class="form-label" for="form3Example4cd">Price of your product</label>
+                              </div>
+                            </div>
+          
+                            <div class="d-flex flex-row align-items-center mb-4">
+                              <i class="fas fa-key fa-lg me-3 fa-fw"></i>
+                              <div class="form-outline flex-fill mb-0">
+                                {{form.time_to_publish}}
+  
+                                <label class="form-label" for="form3Example4cd">Time to publish your product</label>
+                              </div>
+                            </div>
+                            <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
+                              <button type="submit" class="btn btn-dark btn-lg">Register</button>
+                            </div>
+                           
+                            
+                            {{form.errors}}
+          
+                          
+          
+                        </div>
+                        <div class="col-md-10 col-lg-6 col-xl-7  order-1 order-lg-2" style="margin-top: 200px;">
+                          <h3 class="mb-5" style="text-align: center; color: grey;">Choose images for your Product</h3>
+                          <div class="d-flex flex-row align-items-center  ">
+                            <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+                            <div class="form-outline flex-fill mb-0">
+                                <input class="form-control " type="file" name="image1" accept="image/*" required="" id="id_image1">
+                              <label class="form-label" for="id_profile_picture"></label>
+                            </div>
+                          </div>
+  
+                          <div class="d-flex flex-row align-items-center  ">
+                            <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+                            <div class="form-outline flex-fill mb-0">
+                                <input class="form-control " type="file" name="image2" accept="image/*" required="" id="id_image2">
+                              <label class="form-label" for="id_profile_picture"></label>
+                            </div>
+                          </div>
+  
+                          <div class="d-flex flex-row align-items-center  ">
+                            <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+                            <div class="form-outline flex-fill mb-0">
+                                <input class="form-control " type="file" name="image3" accept="image/*" required="" id="id_image3">
+                              <label class="form-label" for="id_profile_picture"></label>
+                            </div>
+                          </div>
+  
+                          <div class="d-flex flex-row align-items-center  ">
+                            <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+                            <div class="form-outline flex-fill mb-0">
+                                <input class="form-control " type="file" name="image3" accept="image/*" required="" id="id_image4">
+                              <label class="form-label" for="id_profile_picture"></label>
+                            </div>
+                          </div>
+          
+                        </div>
+                        
+                      </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+        
+        {% endblock %}
+</body>
+</html>

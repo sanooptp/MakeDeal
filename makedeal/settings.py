@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 import os
 from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -34,6 +35,8 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'dashboard',
     'product',
+    'purchase',
+    'crispy_forms',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -133,6 +136,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = 'dashboard'
 LOGOUT_URL = 'logout'
+LOGOUT_REDIRECT_URL = 'dashboard'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
@@ -152,7 +156,7 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
-LOGIN_URL = '/auth/login/google-oauth2/'
+LOGIN_URL = '/'
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '482397941429-7tkot32sp416hnr3ienke8ruobpvpdcd.apps.googleusercontent.com'
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '6XO4fhvSPyAu9KPYETNoYzVe'
 
@@ -160,3 +164,12 @@ MEDIA_URL = '/media/'
 
 # Path where media is stored
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+
+# Django SECRET_KEY for sessions                                                                                                                              
+SECRET_KEY='development key' # change this to a secret string when deploying
+
+# Twilio credentials and phone number
+TWILIO_ACCOUNT_SID = config('TWILIO_ACCOUNT_SID')
+# 'ACeacc4ea5efdb536caf17a0c66289166f' # obtained from twilio.com/console
+TWILIO_AUTH_TOKEN='42140e9288179603926b2167f1b07ddf' # also obtained from twilio.com/console
+TWILIO_NUMBER='+19383333504' # use the number you received when signing up or buy a new number

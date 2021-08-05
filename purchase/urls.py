@@ -4,5 +4,6 @@ from .views import DeletePurchaseView, PurchasedView
 
 urlpatterns = [
     path('purchased', PurchasedView.as_view(), name= 'purchased'),
-    path('<pk>/deletepurchase/', DeletePurchaseView.as_view(), name='deletepurchase')
+    path('<pk>/deletepurchase/', DeletePurchaseView.as_view(), name='deletepurchase'),
+    
 ]

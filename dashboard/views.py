@@ -24,6 +24,7 @@ from django.core.mail import EmailMessage, send_mail
 from .tokens import account_activation_token
 from django.conf import settings
 from product.models import Product
+from django.db.models import Q
 
 
 class DashboardView(LoginRequiredMixin, generic.ListView):
@@ -157,3 +158,24 @@ class ProfileEditView(LoginRequiredMixin, generic.CreateView):
         return render(request, self.template_name, context)
 
 
+# Search
+
+class SearchResultsView(generic.ListView):
+    model = Product
+    template_name = 'dashboard/search_results.html'   
+
+    def get_queryset(self): # new
+        query = self.request.GET.get('search')
+        object_list = Product.objects.filter(
+            Q(name__icontains=query) | Q(location__icontains=query)
+        )
+        return object_list
+    
+class ShowProfileView(generic.ListView):
+    template_name= 'dashboard/showprofile.html'
+    
+    def get(self, request,pk):
+        userprofile = User.objects.get(pk=pk)
+        userdetails = UserDetails.objects.get(user= userprofile)
+        context = {'userdetails': userdetails, 'userprofile': userprofile}
+        return render (request, self.template_name, context)

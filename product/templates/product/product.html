@@ -9,44 +9,129 @@
 <body>
     {% extends 'dashboard/base.html' %}
         {% block content %}
+        
+            
+<section class="vh-100" style="background-color:">
+    <div class="container py-5 h-100">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col col-xl-10">
+          <div class="card mb-5" style="border-radius: 1rem; ">
+            <div class="row g-0">
+              <div class="col-md-6 col-lg-5 d-none d-md-block">
+                <img
+                  src="{{product.image1.url}}"
+                  alt="login form"
+                  class="img-fluid" style="border-radius: 1rem 1rem 1rem 1rem;"
+                />
+                <!-- <img src="{{detailsform.instance.profile_picture.url}}" alt="" class="img-fluid"> -->
+              </div>
+              <div class="col-md-6 col-lg-7 d-flex align-items-center">
+                <div class="card-body p-4 p-lg-5 text-black">
+  
+               
+  
+                      <div class="d-flex  ">
+                          <h1 class="display-3 fw-bold ">{{product.name}}</h1>
+                      </div>
+    
+                      
+                      <div class="form-outline mb-4">
+                        <h3 style="color: gray;">{{product.category}}</h3>
+                        
+                      </div>
+                      <p>
+                          {{product.description}}
+                      </p>
+                      <div class="form-outline mb-4">
+                        <h2 style="color: green;">
+                            ₹{{product.price}}
+                        </h2>
+                        
+                      </div>
 
-               {{product.name}}
-                <br>
-               {{product.description}}
-<br>
-               {{product.category}}
-<br>
-               {{product.location}}
-<br>
-               <img style="width: 200px; height: 150px;" src="{{product.image1.url}}" alt="image1">
-<br>
-               {{product.price}}
-<br>
-               {{product.time_to_publish}}
+                      <div class="form-outline mb-4">
+                        
+                      </div>
+    
+                      <div class="form-outline mb-4">
+                        {% if product.user != request.user%}
+                        <h5>Posted by: {{product.user.username}}</h5>
+                        <p>{{product.location}}</p>
+                        {% endif %}
 
-            </li>
-        </ul>
-        {% if product.user == request.user%}
+                      </div>
+                      <div class="pt-1 " style="text-align: right;">
+                        {% if product.user == request.user%}
+                        <a href="{% url 'editproduct' product.id %}"><button class="btn btn-dark btn-lg btn-block" type="submit">Edit Product details</button></a>
+                        {% else %}
+                            {% if purchase %}
+                
+                                <h3 style="color: red;">Purchase request already sent!</h3>
+                
+                            {%else%}
+                
+                                <form action="" method="POST">
+                                    {% csrf_token %}
+                                    <p>
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <label for="id_buyer_price" style="padding-top: 8px;">Your Price:</label> 
+                                            </div>
+                                            <div class="col-6">
+                                                <input type="number" name="buyer_price" required="" id="id_buyer_price" class="form-control">
+                                            </div>
+                                        </div>
+                                        
+                                    </p>
+                                    <button class="btn btn-dark" type="submit">Buy</button>
+                                </form>
+                
+                            {% endif %}
+                        {% endif %}
+                      </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
-            <a href="{% url 'editproduct' product.id%}"><button>Edit</button></a>
+          {% if product.user == request.user%}
+          <div>
+            <h1>Buyers interested</h1>
+          </div>
+            {% for purchase in seller_product%}
+                <div class="row mb-5" style=" border: 1px solid rgba(0,0,0,.125); border-radius: 20px;">
+                  
+                    <div class="col-md-4 " style="margin-top: 50px;">
+                        <h1>
+                        {{purchase.buyer}}
+                        </h1>
+                    </div>
 
-        {% else %}
-            {% if purchase %}
+                    <div class="col-md-5 mb-5" style="margin-top: 50px;">
+                        <h1 style="color:orangered;">
+                          ₹{{purchase.buyer_price}}
+                        </h1>
+                    </div>
+                    
 
-                <h1>request send</h1>
-
-            {%else%}
-
-                <form action="" method="POST">
-                    {% csrf_token %}
-                    {{buyform.as_p}}
-                    <input type="submit" name="Buy">
-                </form>
-
-            {% endif %}
-
+                    <div class="col-md-3 " style="margin-top: 50px;">
+                        {% if purchase.status == False %}
+                            <a href="{% url 'acceptpurchase' purchase.id %}"> <button class="btn btn-success">Accept</button></a>
+                        {% else %}
+                            <a href="{% url 'rejectpurchase' purchase.id %}"> <button class="btn btn-danger">Reject</button></a>
+                            <a href="{% url 'showprofile' purchase.buyer.id %}"><button class="btn btn-success">Contact buyer</button></a>
+                        {% endif %}
+                        
+                    </div>
+                    </div>
+            {% endfor %}
+                </div>
+                </div>
         {% endif %}
-
+       
+      </div>
+    </div>
+  </section>
 
         {% endblock %}
 </body>

@@ -5,7 +5,10 @@ from django.utils.regex_helper import flatten_result
 from .models import Product
 
 class CreateProductForm(ModelForm):
-    location= forms.CharField(required=False)
+    name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
+    description = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
+    location = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
+    # price = forms.NumberInput(attrs={'class': 'form-control'})
     image2 = forms.ImageField(required=False)
     image3 = forms.ImageField(required=False)
     image4 = forms.ImageField(required=False)

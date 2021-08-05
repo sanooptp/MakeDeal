@@ -1,6 +1,7 @@
+from django.http.response import HttpResponse
 from dashboard.models import UserDetails
 from purchase.models import Purchase
-from purchase.forms import BuyForm
+from purchase.forms import BuyForm, PurchaseStatusForm
 from django.views.generic.base import TemplateView
 from product.models import Product
 from typing import Generic
@@ -13,11 +14,12 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from .forms import CreateProductForm, EditProductForm
 from django.contrib import messages
-from django.shortcuts import redirect
+from django.shortcuts import redirect,get_object_or_404
 from django.template.loader import render_to_string
 from django.core.mail import EmailMessage, send_mail
 from django.conf import settings
-
+from django.contrib.auth.models import User
+from twilio.rest import Client
 
 
 
@@ -41,30 +43,33 @@ class ProductCreateView(LoginRequiredMixin, generic.FormView):
                 return render(request, self.template_name, {'form': form})
 
 
+
 class MyProductView(LoginRequiredMixin,generic.ListView):
     template_name = 'product/myproducts.html'
     context_object_name = 'products'
     def get_queryset(self):
         return Product.objects.filter(user=self.request.user)
 
+
+
 class ProducView(generic.CreateView):
     template_name = 'product/product.html'
     context_object_name = 'products'
 
-    # def get_queryset(self,request, id):
-    #     return Product.objects.filter(id= id)
-
-
     def get (self, request, id):
+        # import pdb;
+        # pdb.set_trace() 
         product = Product.objects.get(id = id)
         purchase = ''
         buyform = BuyForm
-        if Purchase.objects.filter(product = product, buyer = request.user):
+        seller_product = Purchase.objects.filter(product = product, seller = request.user) #checking for myproducts as seller
+
+        if Purchase.objects.filter(product = product, buyer = request.user):    # checking for purchases as buyer
             if Purchase.objects.filter(product = product, buyer = request.user):
                 purchase = Purchase.objects.get(product = product, buyer = request.user)
-            context= {'product': product, 'purchase': purchase}
+            context= {'product': product, 'purchase': purchase, 'seller_product': seller_product}
         else:
-            context= {'product': product, 'buyform': buyform}
+            context= {'product': product, 'buyform': buyform, 'seller_product': seller_product}
         return render(request, self.template_name, context )
     
     def post(self, request, id):
@@ -91,9 +96,21 @@ class ProducView(generic.CreateView):
                 })
                 email_from = settings.EMAIL_HOST_USER
                 send_mail( mail_subject, message, email_from, [seller_email] )
+
+                # twilio send sms
+                message_to_broadcast = ("Have you played the incredible TwilioQuest ")
+                client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
+                message = client.messages.create(
+                body=f' Product purchase notification \n Hi {seller} \n User {request.user} wants to buy your product {product.name} for the price Rs{price}.',
+                from_=settings.TWILIO_NUMBER,
+                to=f'+919656073331')
+
+
                 return redirect (self.request.path_info)
             else:
                 return render(request, self.template_name, {'buyform': buyform})
+
+
 
 
 class EditProductView(LoginRequiredMixin,generic.CreateView):
@@ -136,3 +153,27 @@ class EditProductView(LoginRequiredMixin,generic.CreateView):
                 return redirect('myproducts')
         return render(request, self.template_name, {'form': form})
 
+
+def acceptpurchase(request, pk):
+    purchase = get_object_or_404(Purchase, pk=pk)
+    purchase.status = True
+    purchase.save(update_fields=['status'])
+    seller_email = purchase.seller.email
+    print(seller_email)
+    mail_subject = 'Product purchase notification.'
+    message = render_to_string('product/sellconfirm_mail.html', {
+        'buyer': request.user,
+        'product': purchase.product.name,
+        'price' : purchase.buyer_price,
+        'seller': purchase.seller
+    })
+    email_from = settings.EMAIL_HOST_USER
+    send_mail( mail_subject, message, email_from, [seller_email] )
+    return redirect('myproducts')
+
+def rejectpurchase(request, pk):
+    purchase = get_object_or_404(Purchase, pk=pk)
+    purchase.status = False
+    purchase.save(update_fields=['status'])
+    return redirect('myproducts')
+    

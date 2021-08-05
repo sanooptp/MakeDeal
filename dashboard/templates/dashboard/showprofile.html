@@ -127,21 +127,17 @@
                     <div class="card-body little-profile text-center">
                         <div class="pro-img"><img src="{{ userdetails.profile_picture.url}}" alt="user"></div>
                         <h1 class="m-b-0 display-1">{{userdetails.name}}</h1>
-                        <h3 style="color:darkolivegreen; font-family: monospace;">@{{user.username}}</h3>
+                        <h3 style="color:darkolivegreen; font-family: monospace;">@{{userprofile.username}}</h3>
                         <div class="row text-center m-t-20">
                             <div class="col-lg-6 col-md-4 m-t-20 " style="text-align: left; padding-left: 40px;">
                                 <h3>Contact Details</h3>
-                                <h4>Email: {{user.email}}</h4>
+                                <h4>Email: {{userprofile.email}}</h4>
                                 <h4>Phone: {{userdetails.phone}}</h4>
                             </div>
                             <div class="col-lg-2 col-md-4 m-t-20">
                                 
                             </div>
-                            <div class="col-lg-4 col-md-4 m-t-20">
-                                {% if user == request.user %}
-                                <a href="{% url 'editprofile' %}"><button class="btn btn-dark">Edit Profile</button></a>
-                                {% endif%}
-                            </div>
+                            
                         </div>
                     </div>
                 </div>

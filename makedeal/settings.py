@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 import os
 from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -35,6 +36,7 @@ INSTALLED_APPS = [
     'dashboard',
     'product',
     'purchase',
+    'crispy_forms',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -162,3 +164,12 @@ MEDIA_URL = '/media/'
 
 # Path where media is stored
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+
+# Django SECRET_KEY for sessions                                                                                                                              
+SECRET_KEY='development key' # change this to a secret string when deploying
+
+# Twilio credentials and phone number
+TWILIO_ACCOUNT_SID = config('TWILIO_ACCOUNT_SID')
+# 'ACeacc4ea5efdb536caf17a0c66289166f' # obtained from twilio.com/console
+TWILIO_AUTH_TOKEN='42140e9288179603926b2167f1b07ddf' # also obtained from twilio.com/console
+TWILIO_NUMBER='+19383333504' # use the number you received when signing up or buy a new number

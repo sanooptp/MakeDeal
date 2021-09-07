@@ -142,8 +142,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'sancliffs@gmail.com'
-EMAIL_HOST_PASSWORD = 'cliffs@2027'
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
 
 
 STATICFILES_DIR = os.path.join(BASE_DIR, 'static/')
@@ -157,8 +157,7 @@ AUTHENTICATION_BACKENDS = (
 )
 
 LOGIN_URL = '/'
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '482397941429-7tkot32sp416hnr3ienke8ruobpvpdcd.apps.googleusercontent.com'
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '6XO4fhvSPyAu9KPYETNoYzVe'
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '
 
 MEDIA_URL = '/media/'
 
@@ -171,5 +170,5 @@ SECRET_KEY='development key' # change this to a secret string when deploying
 # Twilio credentials and phone number
 TWILIO_ACCOUNT_SID = config('TWILIO_ACCOUNT_SID')
 # 'ACeacc4ea5efdb536caf17a0c66289166f' # obtained from twilio.com/console
-TWILIO_AUTH_TOKEN='42140e9288179603926b2167f1b07ddf' # also obtained from twilio.com/console
-TWILIO_NUMBER='+19383333504' # use the number you received when signing up or buy a new number
+TWILIO_AUTH_TOKEN='' # also obtained from twilio.com/console
+TWILIO_NUMBER='' # use the number you received when signing up or buy a new number

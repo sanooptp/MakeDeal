@@ -20,6 +20,7 @@ class Product(models.Model):
     image4 = models.ImageField( upload_to= 'images', height_field=None, width_field=None, max_length=None, null=True, blank=True)
     price = models.IntegerField()
     time_to_publish = models.TimeField( auto_now= False, auto_now_add= True, null=True, blank=True)
+    is_sold = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name

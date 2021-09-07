@@ -4,11 +4,12 @@ from purchase.models import Purchase
 from purchase.forms import BuyForm, PurchaseStatusForm
 from django.views.generic.base import TemplateView
 from product.models import Product
+from notifications.models import BroadcastNotification
 from typing import Generic
 from django import forms
 from django.db import models
 from django.shortcuts import render
-from django.urls.base import is_valid_path
+from django.urls.base import is_valid_path, reverse
 from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
@@ -20,6 +21,9 @@ from django.core.mail import EmailMessage, send_mail
 from django.conf import settings
 from django.contrib.auth.models import User
 from twilio.rest import Client
+from asgiref.sync import async_to_sync  
+import channels.layers
+from datetime import datetime  
 
 
 
@@ -43,13 +47,11 @@ class ProductCreateView(LoginRequiredMixin, generic.FormView):
                 return render(request, self.template_name, {'form': form})
 
 
-
 class MyProductView(LoginRequiredMixin,generic.ListView):
     template_name = 'product/myproducts.html'
     context_object_name = 'products'
     def get_queryset(self):
         return Product.objects.filter(user=self.request.user)
-
 
 
 class ProducView(generic.CreateView):
@@ -87,29 +89,42 @@ class ProducView(generic.CreateView):
                 fm.status = False
                 fm.product = product
                 fm.save()
-                mail_subject = 'Product purchase notification.'
-                message = render_to_string('product/emailnotification.html', {
-                    'buyer': request.user,
-                    'product': product.name,
-                    'price' : price,
-                    'seller': seller
-                })
-                email_from = settings.EMAIL_HOST_USER
-                send_mail( mail_subject, message, email_from, [seller_email] )
+
+                #notification
+                channel_layer = channels.layers.get_channel_layer()
+                async_to_sync(channel_layer.group_send)(    
+                    'notification_%s' % seller.username,
+                    {
+                        'type' : 'send_notification',
+                        'message' : f'Purchase request from {buyer.username} for {product.name}',
+                    }
+                )
+                notification = BroadcastNotification.objects.create(message= f'Purchase request from {buyer.username} for {product.name}', sent= True, to= seller )
+                notification.save()
+
+                # sending mail
+                # mail_subject = 'Product purchase notification.'
+                # message = render_to_string('product/emailnotification.html', {
+                #     'buyer': request.user,
+                #     'product': product.name,
+                #     'price' : price,
+                #     'seller': seller    
+                # })
+                # email_from = settings.EMAIL_HOST_USER
+                # send_mail( mail_subject, message, email_from, [seller_email] )
 
                 # twilio send sms
-                message_to_broadcast = ("Have you played the incredible TwilioQuest ")
-                client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
-                message = client.messages.create(
-                body=f' Product purchase notification \n Hi {seller} \n User {request.user} wants to buy your product {product.name} for the price Rs{price}.',
-                from_=settings.TWILIO_NUMBER,
-                to=f'+919656073331')
+                # message_to_broadcast = ("Have you played the incredible TwilioQuest ")
+                # client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
+                # message = client.messages.create(
+                # body=f' Product purchase notification \n Hi {seller} \n User {request.user} wants to buy your product {product.name} for the price Rs{price}.',
+                # from_=settings.TWILIO_NUMBER,
+                # to=f'+919656073331')
 
-
+                messages.success(request, 'Purchase request submitted')
                 return redirect (self.request.path_info)
             else:
                 return render(request, self.template_name, {'buyform': buyform})
-
 
 
 
@@ -171,9 +186,29 @@ def acceptpurchase(request, pk):
     send_mail( mail_subject, message, email_from, [seller_email] )
     return redirect('myproducts')
 
+
 def rejectpurchase(request, pk):
     purchase = get_object_or_404(Purchase, pk=pk)
     purchase.status = False
     purchase.save(update_fields=['status'])
     return redirect('myproducts')
     
+
+class DeleteProductView(generic.DeleteView):
+    model = Product
+    success_url = reverse_lazy('myproducts')
+    template_name = 'product/deleteconfirm.html'
+
+
+def mark_sold(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    product.is_sold = True
+    product.save(update_fields=['is_sold'])
+    return redirect ('myproducts')
+
+
+def mark_unsold(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    product.is_sold = False
+    product.save(update_fields=['is_sold'])
+    return redirect ('myproducts')

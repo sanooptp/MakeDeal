@@ -25,15 +25,27 @@ from .tokens import account_activation_token
 from django.conf import settings
 from product.models import Product
 from django.db.models import Q
+from channels.layers import get_channel_layer   
+from asgiref.sync import async_to_sync  
+import channels.layers
+
+
+
 
 
 class DashboardView(LoginRequiredMixin, generic.ListView):
     template_name = 'dashboard/dashboard.html'  
     model = Product
     context_object_name = 'products'
+    # extra_context= {'room_name': 'admin'}
+    def get_context_data(self, **kwargs):
+        context = super(DashboardView, self).get_context_data(**kwargs)
+        context['room_name'] = self.request.user.username
+        return context
+
 
 class SignUpView(generic.CreateView):
-    form_class = UserRegisterForm 
+    form_class = UserRegisterForm
     success_url = reverse_lazy('login')
     template_name = 'registration/signup.html'
 
@@ -52,12 +64,12 @@ class SignUpView(generic.CreateView):
             if form.is_valid():
                 if profile_form.is_valid():
                     email = form.cleaned_data.get('email')
-                    # if User.objects.filter(email=email).exists():
-                    #      return HttpResponse('Email exists, Please login')
-                    # else:
-                    user = form.save(commit=False)
-                    user.is_active = False
-                    user.save()
+                    if User.objects.filter(email=email).exists():
+                         return HttpResponse('Email exists, Please login')
+                    else:
+                        user = form.save(commit=False)
+                        user.is_active = False
+                        user.save()
 
                     # Saving user profile
                     profile = profile_form.save(commit=False)
@@ -98,6 +110,7 @@ class IndexView(generic.TemplateView):
         if request.user.is_authenticated:
             return redirect('dashboard')
         return super(IndexView, self).get(request, *args, **kwargs)
+        
     
     
 def activate(request, uidb64, token):
@@ -179,3 +192,15 @@ class ShowProfileView(generic.ListView):
         userdetails = UserDetails.objects.get(user= userprofile)
         context = {'userdetails': userdetails, 'userprofile': userprofile}
         return render (request, self.template_name, context)
+
+
+def test(request):
+    channel_layer = channels.layers.get_channel_layer()
+    async_to_sync(channel_layer.group_send)(    
+        'notification_%s' % request.user.username,
+        {
+            'type' : 'send_notification',
+            'message' : 'Notificationjdshfksjf'
+        }
+    )
+    return HttpResponse('success')

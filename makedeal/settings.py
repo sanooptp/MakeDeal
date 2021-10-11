@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 import os
 from pathlib import Path
+import environ
+
+env = environ.Env()
+environ.Env.read_env()
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -152,8 +156,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'sancliffs@gmail.com'
-EMAIL_HOST_PASSWORD = 'cliffs@2027'
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 
 
 STATICFILES_DIR = os.path.join(BASE_DIR, 'static/')
@@ -167,8 +171,8 @@ AUTHENTICATION_BACKENDS = (
 )
 
 LOGIN_URL = '/'
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '482397941429-7tkot32sp416hnr3ienke8ruobpvpdcd.apps.googleusercontent.com'
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '6XO4fhvSPyAu9KPYETNoYzVe'
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
 
 MEDIA_URL = '/media/'
     
@@ -179,9 +183,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 SECRET_KEY='development key' # change this to a secret string when deploying
 
 # Twilio credentials and phone number
-TWILIO_ACCOUNT_SID ='ACeacc4ea5efdb536caf17a0c66289166f'
-TWILIO_AUTH_TOKEN='eb6f163a5a48d319cccca9399b22e5ce' # also obtained from twilio.com/console
-TWILIO_NUMBER='+19383333504' # use the number you received when signing up or buy a new number
+TWILIO_ACCOUNT_SID = env('TWILIO_ACCOUNT_SID')
+TWILIO_AUTH_TOKEN= env('TWILIO_AUTH_TOKEN')
+TWILIO_NUMBER=env('TWILIO_NUMBER')
 
 # Django channels
 ASGI_APPLICATION = "makedeal.asgi.application"

@@ -25,7 +25,7 @@ urlpatterns = [
     path('api/', include(router.urls)),
     path('api-token-auth/', views.obtain_auth_token, name='api-tokn-auth'),
     path('api-auth/', include('rest_framework.urls')),
-    path('apitest/',include('restframework.urls')),
+    path('',include('restframework.urls')),
     path('docs/', include_docs_urls(title='Todo Api')),
     
     

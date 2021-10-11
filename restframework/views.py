@@ -1,6 +1,9 @@
+from product.models import Product
+from django.contrib.auth import mixins
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
+from restframework import models
 from restframework.models import Snippet, TestModel
 from restframework.serializers import SnippetSerializer, TestSerializer
 from rest_framework import status
@@ -17,8 +20,10 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.views import generic
 from rest_framework.permissions import AllowAny
-from .serializers import MyTokenObtainPairSerializer
+from .serializers import MyTokenObtainPairSerializer, ProductSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.renderers import TemplateHTMLRenderer
+from django.shortcuts import get_object_or_404, redirect
 
 
 class SnippetList(generics.ListCreateAPIView):
@@ -81,12 +86,45 @@ class ExampleView(APIView):
         }
         return Response(content)
 
+
 class ApitestView(generic.TemplateView):
+    renderer_classes = [TemplateHTMLRenderer]
     template_name = 'restframework/apitest.html'
 
+class Apitest(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'restframework/apitestform.html'
+    permission_classes = [IsAuthenticated]
+    def get(self, request, pk):
+        profile = get_object_or_404(TestModel, pk=pk)
+        serializer = TestSerializer(profile)
+        return Response({'serializer': serializer, 'profile': profile})
+
+    def post(self, request, pk):
+        profile = get_object_or_404(TestModel, pk=pk)
+        serializer = TestSerializer(profile, data=request.data)
+        if not serializer.is_valid():
+            return Response({'serializer': serializer, 'profile': profile})
+        serializer.save()
+        return redirect('apitestlist')
+
+class ApitestListView(generic.ListView):
+    template_name= 'restframework/apitestlist.html'
+    model= TestModel
+    context_object_name= 'profiles'
+    
 
 # Login
 class MyObtainTokenPairView(TokenObtainPairView):
     permission_classes = (AllowAny,)
     serializer_class = MyTokenObtainPairSerializer
 
+# Proctct View API
+class ProductApiView(generics.ListCreateAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    template_name = 'restframework/productview.html'
+
+class ProductView(generic.TemplateView):
+    template_name='restframework/productview.html'
+    

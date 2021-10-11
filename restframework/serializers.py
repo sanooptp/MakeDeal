@@ -1,3 +1,4 @@
+from product.models import Product
 from django.contrib.auth import models
 from rest_framework import serializers
 from restframework.models import Snippet, LANGUAGE_CHOICES, STYLE_CHOICES, TestModel
@@ -13,16 +14,19 @@ class SnippetSerializer(serializers.ModelSerializer):
         model= Snippet
         fields = ['id', 'title', 'code', 'linenos', 'language', 'style', 'owner','snippets']
 
+
 class UserSerializer(serializers.ModelSerializer):
     snippets = serializers.PrimaryKeyRelatedField(many=True, queryset=Snippet.objects.all())
     class Meta:
         model = User
         fields = ['id', 'username', 'snippets']
 
+
 class TestSerializer(serializers.ModelSerializer):
     class Meta:
         model = TestModel   
         fields = "__all__"
+
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
@@ -57,3 +61,12 @@ class LoginUserSerializer(serializers.Serializer):
         if user and user.is_active:
             return user
         raise serializers.ValidationError("Invalid Details.")
+
+
+# project serializers
+class ProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model= Product
+        fields = ['name','description']
+        
+    

@@ -156,13 +156,10 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-<<<<<<< HEAD
 EMAIL_HOST_USER = env('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
-=======
 EMAIL_HOST_USER = ''
 EMAIL_HOST_PASSWORD = ''
->>>>>>> 68ed85fa20230b0f1353444a5d74189a2398d6d6
 
 
 STATICFILES_DIR = os.path.join(BASE_DIR, 'static/')
@@ -176,13 +173,8 @@ AUTHENTICATION_BACKENDS = (
 )
 
 LOGIN_URL = '/'
-<<<<<<< HEAD
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY')
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
-=======
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = ''
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = ''
->>>>>>> 68ed85fa20230b0f1353444a5d74189a2398d6d6
 
 MEDIA_URL = '/media/'
     
@@ -193,15 +185,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 SECRET_KEY='development key' # change this to a secret string when deploying
 
 # Twilio credentials and phone number
-<<<<<<< HEAD
 TWILIO_ACCOUNT_SID = env('TWILIO_ACCOUNT_SID')
 TWILIO_AUTH_TOKEN= env('TWILIO_AUTH_TOKEN')
 TWILIO_NUMBER=env('TWILIO_NUMBER')
-=======
-TWILIO_ACCOUNT_SID =''
-TWILIO_AUTH_TOKEN='' # also obtained from twilio.com/console
-TWILIO_NUMBER='' # use the number you received when signing up or buy a new number
->>>>>>> 68ed85fa20230b0f1353444a5d74189a2398d6d6
 
 # Django channels
 ASGI_APPLICATION = "makedeal.asgi.application"

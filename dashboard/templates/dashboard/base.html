@@ -1,107 +1,165 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        {% load static %}
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <meta name="description" content="" />
-        <meta name="author" content="" />
-        
-        <!-- Favicon-->
-        <link rel="icon" type="image/x-icon" href="{ static 'assets/favicon.ico'}" />
-        <!-- Bootstrap icons-->
-        <link href="{% static 'bootstrap-icons-1.5.0/bootstrap-icons.css'%}" rel="stylesheet" />
-        <!-- Core theme CSS (includes Bootstrap)-->
-        <link href="{% static 'css/bootstrap.css'%}" rel="stylesheet" type="text/css"/>
-        <link href="{% static 'css/bootstrap.min.css'%}" rel="stylesheet" />
 
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <script src="{% static 'js/bootstrap.min.js' %}"></script>
-        <script src="{% static 'js/bbootstrap.bundle.min.js' %}"></script>
-        <script src="{% static 'js/bootstrap.bundle.js' %}"></script>  
+<head>
+    {% load static %}
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <!-- Bootstrap icons-->
+    <link href="{% static 'bootstrap-icons-1.5.0/bootstrap-icons.css'%}" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj"
+        crossorigin="anonymous"></script>
 
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+    <title>MakeDeal</title>
+</head>
 
-        <title>MakeDeal</title>
-       </head>  
-    
-       
-        
-        
-        <!-- Navigation-->
-        <nav class="navbar navbar-expand-lg navbar-light " >
-            <div class=" input-group">
-                <a style="padding-left: 30px;" class="navbar-brand" href="{% url 'dashboard' %}">MakeDeal</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
-                        
-                        <li>
-                            <form action="{% url 'search_results' %}" method="get" >
-                                <input name="search" type="text"  placeholder="Search..." class="form-control">
-                            </form>
-                        </li>
-                    </ul>
 
-                    
 
-                   <div style="margin-right: 10px;">
-                    <ul class="navbar-nav ">
-                        <li class="nav-item"><a class="btn btn-outline-dark" aria-current="page" href="{% url 'createproduct' %}">Add Product <i class="bi bi-plus-circle"></i></a></li>
-                        
-                    </ul>
-                   </div>
-                        <div>
-                            <a href="{% url 'purchased' %}">
-                                <button class="btn btn-dark" type="submit">
-                                    <i class="bi-cart-fill me-1"></i>
-                                    Buy
-                                    <!-- <span class="badge bg-dark text-white ms-1 rounded-pill">0</span> -->
-                                </button>
-                            </a>
-                        </div>
-                        
-                        <div style="margin-right: 30px;" class="dropdown">
-                            <a href="{% url 'profile' %}" class="nav-link dropdown-toggle navbar-brand" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <!-- <img src="{{object_list.profile_picture.url}}" class="rounded-circle"
-                                height="30"
-                                alt=""
-                                loading="lazy" alt=""> -->
-                                {{request.user.username}}
-                              </a>
-                              <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
-                                <li><a class="dropdown-item" href="{% url 'myproducts'%}">My Products</a></li>
-                                <li><a class="dropdown-item" href="{% url 'profile'%}">View Profile</a></li>
-                                <li><a class="dropdown-item" href="{% url 'editprofile'%}">Edit Profile</a></li>
-                                <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
-                              </ul>
-                    </div>
 
-                    
+<!-- Navigation-->
+<nav class="navbar navbar-expand-lg navbar-light ">
+    <div class=" input-group">
+        <a style="padding-left: 30px;" class="navbar-brand" href="{% url 'dashboard' %}">MakeDeal</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span
+                class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+
+                <li>
+                    <form action="{% url 'search_results' %}" method="get">
+                        <input name="search" type="text" placeholder="Search..." class="form-control">
+                    </form>
+                </li>
+            </ul>
+
+            <div style="margin-right: 30px;" class="dropdown">
+                <a class="nav-link dropdown-toggle navbar-brand btn btn-outline-dark" id="navbarDarkDropdownMenuLink"
+                    role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-bell-fill">
+
+                    </i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                        id="notificationBadge">
+                            {{count}}
+                        <span class="visually-hidden">Notification</span>
+                    </span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink"
+                    id="notificationDropdown">
+                    {% if count == 0 %}
+                    <li id="no-notifications">No Notifications</li>
+                    {%else%}
+                    {% for i in notifications%}
+                    {% if i.to %}
+                    {% if i.to == user %}
+                    <li>
+                        {{i.message}}
+                        <form method="POST" action="{% url 'delete-notification' i.id %}">
+                            {% csrf_token %}
+                            <input type="submit" class="btn-close btn-close-white" value="">
+                        </form>
+                    </li>
+                    <hr class='dropdown-divider'>
+                    {%endif%}
+                    {%else%}
+                    <li>
+                        {{i.message}}
+                        <form method="POST" action="{% url 'delete-notification' i.id %}">
+                            {% csrf_token %}
+                            <input type="submit" class="btn-close btn-close-white" value="">
+                        </form>
+                        <hr class=''>
+                        {%endif%}
+
+                        {%endfor%}
+                    {%endif%}
+                </ul>
+
+
             </div>
-        </nav>
+            <div style="margin-right: 10px;">
+                <ul class="navbar-nav ">
+                    <li class="nav-item"><a class="btn btn-outline-dark" aria-current="page"
+                            href="{% url 'createproduct' %}">Add Product <i class="bi bi-plus-circle"></i></a></li>
+
+                </ul>
+            </div>
+            <div>
+                <a href="{% url 'purchased' %}">
+                    <button class="btn btn-dark" type="submit">
+                        <i class="bi-cart-fill me-1"></i>
+                        Buy
+                        <!-- <span class="badge bg-dark text-white ms-1 rounded-pill">0</span> -->
+                    </button>
+                </a>
+            </div>
+
+            <div style="margin-right: 30px;" class="dropdown">
+                <a class="nav-link dropdown-toggle navbar-brand" id="navbarDarkDropdownMenuLink" role="button"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    {{request.user.username}}
+                </a>
+                <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+                    <li><a class="dropdown-item" href="{% url 'myproducts'%}">My Products</a></li>
+                    <li><a class="dropdown-item" href="{% url 'profile'%}">View Profile</a></li>
+                    <li><a class="dropdown-item" href="{% url 'editprofile'%}">Edit Profile</a></li>
+                    <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                </ul>
+
+            </div>
 
 
-
-
-       
-
-        <style>
-            .product_image{
-                width: 100%;
-                height: 177px;
-                border-radius: 4px; 
-            }
-        </style>
-        <div>
-            {% block content %}
-            
-            {% endblock %}
         </div>
-    <body>
-    </body>
-    
-    
+</nav>
+
+{{ room_name|json_script:"room-name" }}
+<script>
+    window.onload = function () {
+        // document.getElementById("notificationBadge").innerHTML = {{notification.count}}
+    };
+    const roomName = JSON.parse(document.getElementById('room-name').textContent);
+
+    const notificationSocket = new WebSocket(
+        'ws://'
+        + window.location.host
+        + '/ws/notification/'
+        + roomName
+        + '/'
+    );
+
+    notificationSocket.onmessage = function (e) {
+        const data = JSON.parse(e.data);
+        // document.querySelector('#chat-log').value += (data.message + '\n');
+        console.log(data)
+        document.getElementById('notificationDropdown').innerHTML = "<li class = 'dropdown-item'>" + data.message + " <a href='' class='btn-close btn-close-white'></a> </li> <hr class = 'dropdown-divider'>" + document.getElementById("notificationDropdown").innerHTML
+        document.getElementById("notificationBadge").innerHTML = parseInt(document.getElementById('notificationBadge').innerHTML) + 1;
+        document.getElementById("no-notifications").innerHTML = '';
+    };
+
+    notificationSocket.onclose = function (e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+</script>
+
+<style>
+    .product_image {
+        width: 100%;
+        height: 177px;
+        border-radius: 4px;
+    }
+</style>
+<div>
+    {% block content %}
+
+    {% endblock %}
+</div>
+
+<body>
+</body>

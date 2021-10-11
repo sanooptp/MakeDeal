@@ -13,9 +13,10 @@
         
         <ul class="messages">
             {% for message in messages %}
-            <div class="alert alert-dark" role="alert">
-                <ul{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</ul>
-              </div>
+            <div class="alert alert-success" role="alert" style="width: 98%;">
+              <ul{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</ul>
+            </div>
+            
             {% endfor %}
         </ul>
         
@@ -38,7 +39,7 @@
             <!-- Post -->
             <div class="row mb-5" style="    border-radius: 30px;
             box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%), 0 6px 20px 0 rgb(0 0 0 / 19%);">
-              <div class="col-md-4 " style="margin-top: 12px;">
+              <div class="col-md-4 " style="margin-top: 12px; margin-bottom: 12px;">
                 <div class="bg-image hover-overlay shadow-1-strong rounded ripple" data-mdb-ripple-color="light">
                   <img src="{{product.image1.url}}" class="img-fluid" style="height: 200px; width: 300px; border-radius: 25px;"/>
                   <a href="#!">

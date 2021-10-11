@@ -12,7 +12,11 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 import os
 from pathlib import Path
-from decouple import config
+import environ
+
+env = environ.Env()
+environ.Env.read_env()
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,6 +41,8 @@ INSTALLED_APPS = [
     'product',
     'purchase',
     'crispy_forms',
+    'notifications',
+    'restframework.apps.RestframeworkConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -44,6 +50,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'social_django',
+    'channels',
+    'django_celery_results',
+    'django_celery_beat',
+    'rest_framework',
+    'coreapi',
+    'knox'
 ]
 
 MIDDLEWARE = [
@@ -72,6 +84,8 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'social_django.context_processors.backends',
                 'social_django.context_processors.login_redirect',
+
+                'dashboard.custom_context_processors.notifications',
             ],
         },
     },
@@ -115,7 +129,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 
@@ -142,8 +156,10 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = ''
-EMAIL_HOST_PASSWORD = ''
+
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+
 
 
 STATICFILES_DIR = os.path.join(BASE_DIR, 'static/')
@@ -157,10 +173,13 @@ AUTHENTICATION_BACKENDS = (
 )
 
 LOGIN_URL = '/'
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
+
 
 MEDIA_URL = '/media/'
-
+    
 # Path where media is stored
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
@@ -168,7 +187,54 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 SECRET_KEY='development key' # change this to a secret string when deploying
 
 # Twilio credentials and phone number
-TWILIO_ACCOUNT_SID = config('TWILIO_ACCOUNT_SID')
-# 'ACeacc4ea5efdb536caf17a0c66289166f' # obtained from twilio.com/console
-TWILIO_AUTH_TOKEN='' # also obtained from twilio.com/console
-TWILIO_NUMBER='' # use the number you received when signing up or buy a new number
+
+TWILIO_ACCOUNT_SID = env('TWILIO_ACCOUNT_SID')
+TWILIO_AUTH_TOKEN= env('TWILIO_AUTH_TOKEN')
+TWILIO_NUMBER=env('TWILIO_NUMBER')
+
+# Django channels
+ASGI_APPLICATION = "makedeal.asgi.application"
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
+
+#Celery settings
+
+CELERY_broker_url ='redis://127.0.0.6379'
+accept_content = ['application/json']
+result_serializer = 'json'
+task_serializer = 'json'
+timezone = 'Asia/Kolkata'
+result_backend = 'django-db'
+
+#Celery Beat
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+
+# Rest Framework
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
+    # 'DEFAULT_PERMISSION_CLASSES' :['rest_framework.permissions.IsAuthenticated'],
+    'PAGE_SIZE': 10,
+    # 'DEFAULT_FILTER_BACKENDS': [
+    #     'django_filters.rest_framework.DjangoFilterBackend'
+    # ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'knox.auth.TokenAuthentication',
+    ],
+}   
+

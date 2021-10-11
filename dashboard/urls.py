@@ -1,7 +1,7 @@
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import DashboardView, IndexView, ProfileEditView, ProfileView, ShowProfileView, SignUpView, activate, SearchResultsView
+from .views import DashboardView, IndexView, ProfileEditView, ProfileView, ShowProfileView, SignUpView, activate, SearchResultsView, test
 urlpatterns = [
     path('dashboard',DashboardView.as_view(), name='dashboard'),
     path('signup/', SignUpView.as_view(), name='signup'),
@@ -12,6 +12,7 @@ urlpatterns = [
     path('editprofile', ProfileEditView.as_view(),name= 'editprofile' ),
     path('search/', SearchResultsView.as_view(), name='search_results'),
     path('<pk>/showprofile', ShowProfileView.as_view(), name= 'showprofile'),
+    path('test', test, name='test'),
 ]
 
 if settings.DEBUG:
